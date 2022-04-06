@@ -13,12 +13,27 @@ private let headerIdentifier = "ProfileHeader"
 class ProfileController :UICollectionViewController{
     
     // MARK: - Properties
+    var user: User? {
+        didSet {
+            navigationItem.title = user?.username
+        }
+    }
     
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureCollectionView()
+        configureNavigationController()
+        fetchUser()
+    }
+    
+    // MARK: - API
+    
+    func fetchUser() {
+        UserService.fetchUser { user in
+            self.user = user
+        }
     }
     
     // MARK: - Helpers
@@ -27,6 +42,10 @@ class ProfileController :UICollectionViewController{
         collectionView.backgroundColor = .white
         collectionView.register(ProfileCell.self, forCellWithReuseIdentifier: cellIdentifier)
         collectionView.register(ProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerIdentifier)
+    }
+    
+    func configureNavigationController() {
+      navigationController?.navigationBar.update(backroundColor: .white, titleColor: .black)
     }
 }
 

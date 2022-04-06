@@ -39,7 +39,7 @@ struct AuthServive {
                                            "username": credentials.username
                 ]
                 
-                Firestore.firestore().collection("users").document(uid).setData(data, completion: comletion)
+                COLLECTION_USERS.document(uid).setData(data, completion: comletion)
             }
         }
     }
