@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>900586339074-l30uv74qm3ef90k271m0kvpdgd9pcj3s.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.900586339074-l30uv74qm3ef90k271m0kvpdgd9pcj3s</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCcAgN89c7NSbXD3ycnkTal2N7eECisxlA</string>
+	<key>GCM_SENDER_ID</key>
+	<string>900586339074</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>co.appbrewery.Quizzler-iOS13-yosuke</string>
+	<key>PROJECT_ID</key>
+	<string>instagramfirestore-526e4</string>
+	<key>STORAGE_BUCKET</key>
+	<string>instagramfirestore-526e4.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:900586339074:ios:7a5f00d86f806f5c94201b</string>
+</dict>
+</plist>
