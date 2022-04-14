@@ -7,24 +7,42 @@
 
 import UIKit
 
+protocol FeedCellDelegate: class {
+    func cell(_ cell: FeedCell, wantsToShowCommentsFor post: Post)
+    func cell(_ cell: FeedCell, didLike post: Post)
+    func cell(_ cell: FeedCell, wantsToShowProfileFor uid: String)
+}
+
 class FeedCell: UICollectionViewCell {
     // MARK: - Properties
     
-    private let profileImageView: UIImageView = {
+    var viewModel: PostViewModel? {
+        didSet {
+            configure()
+        }
+    }
+    
+    weak var delegate: FeedCellDelegate?
+    
+    private lazy var profileImageView: UIImageView = {
         let iv = UIImageView()
         iv.contentMode = .scaleToFill
         iv.clipsToBounds = true
         iv.isUserInteractionEnabled = true
-        iv.image = #imageLiteral(resourceName: "venom-7")
+        iv.backgroundColor = .lightGray
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(showUserProfile))
+        iv.isUserInteractionEnabled = true
+        iv.addGestureRecognizer(tap)
+        
         return iv
     }()
     
     private lazy var usernameButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitleColor(.black, for: .normal)
-        button.setTitle("Venom", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
-        button.addTarget(self, action: #selector(didTapUsername), for: .touchUpInside)
+        button.addTarget(self, action: #selector(showUserProfile), for: .touchUpInside)
         return button
     }()
     
@@ -33,15 +51,15 @@ class FeedCell: UICollectionViewCell {
         iv.contentMode = .scaleToFill
         iv.clipsToBounds = true
         iv.isUserInteractionEnabled = true
-        iv.image = #imageLiteral(resourceName: "venom-7")
         return iv
     }()
     
-    private lazy var likeButton: UIButton = {
+    lazy var likeButton: UIButton = {
         let icon = #imageLiteral(resourceName: "like_unselected")
         let button = UIButton(type: .system)
         button.setImage(icon, for: .normal)
         button.tintColor = .black
+        button.addTarget(self, action: #selector(didTapLike), for: .touchUpInside)
         return button
     }()
     
@@ -50,6 +68,7 @@ class FeedCell: UICollectionViewCell {
         let button = UIButton(type: .system)
         button.setImage(icon, for: .normal)
         button.tintColor = .black
+        button.addTarget(self, action: #selector(didtapComments), for: .touchUpInside)
         return button
     }()
     
@@ -63,7 +82,6 @@ class FeedCell: UICollectionViewCell {
     
     private let likesLabel: UILabel = {
         let label = UILabel()
-        label.text = "1 like"
         label.font = UIFont.boldSystemFont(ofSize: 13)
         label.textColor = .black
         return label
@@ -71,7 +89,6 @@ class FeedCell: UICollectionViewCell {
     
     private let captionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Some test caption for now..."
         label.font = UIFont.boldSystemFont(ofSize: 14)
         label.textColor = .black
         return label
@@ -125,11 +142,36 @@ class FeedCell: UICollectionViewCell {
     
     // MARK: - Actions
     
-    @objc func didTapUsername() {
-        print("DEBUG: did tap username")
+    @objc func showUserProfile() {
+        guard let viewModel = viewModel else { return }
+        delegate?.cell(self, wantsToShowProfileFor: viewModel.post.ownerUid)
     }
     
+    @objc func didtapComments() {
+        guard let viewModel = viewModel else { return }
+        delegate?.cell(self, wantsToShowCommentsFor: viewModel.post)
+    }
+    
+    @objc func didTapLike() {
+        guard let viewModel = viewModel else { return }
+        delegate?.cell(self, didLike: viewModel.post)
+    }
+
+    
+    
     // MARK: - Helpers
+    
+    func configure() {
+        guard let viewModel = viewModel else { return }
+        captionLabel.text = viewModel.caption
+        postImageView.sd_setImage(with:viewModel.imageUrl)
+        
+        profileImageView.sd_setImage(with: viewModel.userProfileImageUrl)
+        usernameButton.setTitle(viewModel.username, for: .normal)
+        likesLabel.text = viewModel.likesLabelText
+        likeButton.tintColor = viewModel.likesButtonTindColor
+        likeButton.setImage(viewModel.likesButtonImage, for: .normal)
+    }
     
     func configureActionButtons() {
         let stackView = UIStackView(arrangedSubviews: [likeButton, commentButton, shareButton])
@@ -140,3 +182,4 @@ class FeedCell: UICollectionViewCell {
         stackView.anchor(top: postImageView.bottomAnchor, width: 120, height: 50)
     }
 }
+
