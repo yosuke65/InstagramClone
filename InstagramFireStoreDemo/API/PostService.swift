@@ -51,6 +51,15 @@ struct PostService {
             completion(posts)
         }
     }
+    
+    static func fetchPost(withPostId postId: String, completion: @escaping(Post) -> Void ) {
+        COLLECTION_POSTS.document(postId).getDocument { snapshot, _ in
+            guard let snapshot = snapshot else { return }
+            guard let data = snapshot.data() else { return }
+            let post = Post(postId: snapshot.documentID, dictionary: data)
+            completion(post)
+        }
+    }
 
     
     static func likePost(post: Post, completion: @escaping(FirestoreCompletion)) {
@@ -83,6 +92,41 @@ struct PostService {
         COLLECTION_USERS.document(uid).collection("user-likes").document(post.postId).getDocument { (snapshot, _) in
             guard let didLike = snapshot?.exists else { return }
             completion(didLike)
+        }
+    }
+    
+    static func fetchFeedPosts(completion: @escaping([Post]) -> Void) {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        var posts = [Post]()
+        COLLECTION_USERS.document(uid).collection("user-feed").getDocuments { snapshot, _ in
+            snapshot?.documents.forEach({ document in
+                fetchPost(withPostId: document.documentID) { post in
+                    posts.append(post)
+                    completion(posts)
+                }
+            })
+        }
+    }
+    
+    static func updateUserFeedAfterFollowing(user: User, didFollow: Bool) {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        let query = COLLECTION_POSTS
+            .whereField("ownerUid", isEqualTo: user.uid)
+        query.getDocuments { snapshot, error in
+            guard let documents = snapshot?.documents else { return }
+            
+            let docIds = documents.map({ $0.documentID })
+            
+            docIds.forEach { id in
+                
+                if didFollow {
+                    COLLECTION_USERS.document(uid).collection("user-feed").document(id).setData([:])
+                } else {
+                    COLLECTION_USERS.document(uid).collection("user-feed").document(id).delete()
+                }
+               
+            }
+            
         }
     }
     

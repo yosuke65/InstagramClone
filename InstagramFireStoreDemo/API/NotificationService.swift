@@ -17,7 +17,7 @@ struct NotificationService {
     {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         guard uid != currentUid else { return }
-        
+
         
         let docRef = COLLECTION_NOTIFICATIONS.document(uid).collection("user-notifications").document()
         
